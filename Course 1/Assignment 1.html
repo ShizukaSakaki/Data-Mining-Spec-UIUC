@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 18px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    stroke-width: 4;
+    shape-rendering: crispEdges;
+}
+
+.legend {
+    font-size: 25px;
+    font-weight: bold;
+    text-anchor: middle;
+} 
+
+</style>
+<body>
+
+<!-- load the d3.js library -->    
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 30, left: 50},
+    width = 1000 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+
+// Set the ranges
+// Set the ranges
+var x = d3.scale.linear().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+var legendSpace = width/3;
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(5);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
+
+// Define the line
+var valueline1 = d3.svg.line()
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.Glob); });
+
+var valueline2 = d3.svg.line()
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.NHem); });
+
+var valueline3 = d3.svg.line()
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.SHem); });
+    
+// Adds the svg canvas
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom + 100)
+    .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("Data.csv", function(error, data) {
+    data.forEach(function(d) {
+        d.Year = +d.Year;
+        d.Glob = +d.Glob;
+        d.NHem = +d.NHem;
+        d.SHem = +d.SHem;
+    });
+
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.Year; }));
+    y.domain([-65, 105]);
+
+    // Add the valueline path.
+    svg.append("path")
+        .attr("d", valueline1(data))
+        .style("stroke", "blue")
+
+
+    svg.append("path")
+        .attr("d", valueline2(data))
+        .style("stroke", "red")
+
+    
+    svg.append("path")
+        .attr("d", valueline3(data))
+        .style("stroke", "green")
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    svg.append("text")                                 
+        .attr("x", 5)
+        .attr("y", 10)          
+        .style("font-size", "20px")           
+        .text("Zonal Annual Means");  
+
+    svg.append("text")                                 
+        .attr("x", width - 35)
+        .attr("y", height - 10)          
+        .style("font-size", "20px")           
+        .text("Year");  
+
+    svg.append("text")                                 
+        .attr("x", (legendSpace/2)+0*legendSpace)
+        .attr("y", height + (margin.bottom/2)+ 40)        
+        .attr("class", "legend")    
+        .style("fill", "blue")            
+        .text("Global");  
+
+    svg.append("text")                                  
+        .attr("x", (legendSpace/2)+0.9*legendSpace)
+        .attr("y", height + (margin.bottom/2)+ 40)       
+        .attr("class", "legend")    
+        .style("fill", "red")            
+        .text("North Hemispheres");  
+
+    svg.append("text")                                  
+        .attr("x", (legendSpace/2)+2*legendSpace) 
+        .attr("y", height + (margin.bottom/2)+ 40)         
+        .attr("class", "legend")    
+        .style("fill", "green")         
+        .text("South Hemispheres");  
+
+    svg.append("rect")
+        .attr("x", (legendSpace/2)+0*legendSpace - 65) 
+        .attr("y", height + (margin.bottom/2)+ 18)         
+        .style("fill", "blue")
+        .attr("width", 25)
+        .attr("height", 25);
+
+    svg.append("rect")
+        .attr("x", (legendSpace/2)+0.75*legendSpace - 95) 
+        .attr("y", height + (margin.bottom/2)+ 18)         
+        .style("fill", "red")
+        .attr("width", 25)
+        .attr("height", 25);
+
+    svg.append("rect")
+        .attr("x", (legendSpace/2)+1.75*legendSpace - 65) 
+        .attr("y", height + (margin.bottom/2)+ 18)         
+        .style("fill", "green")
+        .attr("width", 25)
+        .attr("height", 25);
+});
+
+</script>
+</body>
