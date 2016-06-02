@@ -1,8 +1,18 @@
+library(networkD3)
+library(igraph)
 football <- read.graph("football.gml", format="gml")
-conf = c("Atlantic Coast", "Big East", "Big Ten", "Big Twelve", "Conference USA", 
-         "Independents", "Mid-American", "Mountain West","Pacific Ten", 
-         "Southeastern", "Sun Belt", "Western Athletic")
-V(football)$belonging = conf[V(football)$value + 1]
+V(football)$belonging[V(football)$value == 0] = "Atlantic Coast"
+V(football)$belonging[V(football)$value == 1] = "Big East"
+V(football)$belonging[V(football)$value == 2] = "Big Ten"
+V(football)$belonging[V(football)$value == 3] = "Big Twelve"
+V(football)$belonging[V(football)$value == 4] = "Conference USA"
+V(football)$belonging[V(football)$value == 5] = "Independents"
+V(football)$belonging[V(football)$value == 6] = "Mid-American"
+V(football)$belonging[V(football)$value == 7] = "Mountain West"
+V(football)$belonging[V(football)$value == 8] = "Pacific Ten"
+V(football)$belonging[V(football)$value == 9] = "Southeastern"
+V(football)$belonging[V(football)$value == 10] = "Sun Belt"
+V(football)$belonging[V(football)$value == 11] = "Western Athletic"
 fbVertices = as_data_frame(football, what = "vertices")
 fbEdges = as_data_frame(football, what = "edges")
 fbEdges$source = fbEdges$from -1 
